@@ -12,40 +12,40 @@ namespace Tournament.Data.Repositories
 {
     public class GameRepository : IGameRepository
     {
-        public readonly TournamentApiContext _context;
+        public readonly TournamentApiContext _dbContext;
         public GameRepository(TournamentApiContext context) 
         {
-            _context = context;
+            _dbContext = context;
         }
 
         public void Add(Game game)
         {
-            throw new NotImplementedException();
+            _dbContext.Games.Add(game);
         }
 
-        public Task<bool> AnyAsync(int id)
+        public async Task<bool> AnyAsync(int id)
         {
-            throw new NotImplementedException();
+            return _dbContext.Games.Any(e => e.Id == id);
         }
 
         public async Task<IEnumerable<Game>> GetAllAsync()
         {
-            return await _context.Games.ToListAsync();
+            return await _dbContext.Games.ToListAsync();
         }
 
-        public Task<Game> GetAsync(int id)
+        public async Task<Game> GetAsync(int id)
         {
-            throw new NotImplementedException();
+            return await _dbContext.Games.FindAsync(id);
         }
 
         public void Remove(Game game)
         {
-            throw new NotImplementedException();
+            _dbContext.Games.Remove(game);
         }
 
         public void Update(Game game)
         {
-            throw new NotImplementedException();
+            _dbContext.Entry(game).State = EntityState.Modified;
         }
     }
 }
