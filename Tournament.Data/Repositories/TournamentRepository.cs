@@ -14,40 +14,41 @@ namespace Tournament.Data.Repositories
     public class TournamentRepository : ITournamentRepository
     {
 
-        private readonly TournamentApiContext _context;
+        private readonly TournamentApiContext _dbContext;
         public TournamentRepository(TournamentApiContext context) 
         {
-            _context = context;
+            _dbContext = context;
         }
 
         public void Add(TournamentDetails tournament)
         {
-            throw new NotImplementedException();
+            _dbContext.TournamentDetails.Add(tournament);
         }
 
-        public Task<bool> AnyAsync(int id)
+        public async Task<bool> AnyAsync(int id)
         {
-            throw new NotImplementedException();
+            return _dbContext.TournamentDetails.Any(e => e.Id == id);
         }
 
         public async Task<IEnumerable<TournamentDetails>> GetAllAsync()
         {
-            return await _context.TournamentDetails.ToListAsync();
+            return await _dbContext.TournamentDetails.ToListAsync();
         }
 
-        public Task<TournamentDetails> GetAsync(int id)
+        public async Task<TournamentDetails> GetAsync(int id)
         {
-            throw new NotImplementedException();
+            return await _dbContext.TournamentDetails.FindAsync(id);
+
         }
 
         public void Remove(TournamentDetails tournament)
         {
-            throw new NotImplementedException();
+            _dbContext.TournamentDetails.Remove(tournament);
         }
 
         public void Update(TournamentDetails tournament)
         {
-            throw new NotImplementedException();
+            _dbContext.Entry(tournament).State = EntityState.Modified;
         }
     }
 }
