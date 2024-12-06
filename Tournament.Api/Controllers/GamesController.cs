@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Tournament.Core.DTO;
 using Tournament.Core.Entites;
 using Tournament.Core.Repositories;
 using Tournament.Data.Data;
@@ -19,15 +21,18 @@ namespace Tournament.Api.Controllers
 
         private readonly IUnitOfWork uow;
 
-        public GamesController(TournamentApiContext context, IUnitOfWork unitOfWork)
+        private readonly IMapper _mapper;
+
+        public GamesController(TournamentApiContext context, IUnitOfWork unitOfWork, IMapper mapper)
         {
             _context = context;
             uow = unitOfWork;
+            _mapper = mapper;
         }
 
         // GET: api/Games
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Game>>> GetGames()
+        public async Task<ActionResult<IEnumerable<GameDto>>> GetGames()
         {
             //var games = await _context.Games.ToListAsync(); //Old version
 
@@ -37,12 +42,15 @@ namespace Tournament.Api.Controllers
             {
                 return NotFound(new { Message = $"Games not found." });
             }
-            return Ok(games); 
+
+            var gameDtos = _mapper.Map<IEnumerable<GameDto>>(games);
+
+            return Ok(gameDtos); 
         }
 
         // GET: api/Games/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Game>> GetGame(int id)
+        public async Task<ActionResult<GameDto>> GetGame(int id)
         {
             // var game = await _context.Games.FindAsync(id);//Old version
 
@@ -52,15 +60,19 @@ namespace Tournament.Api.Controllers
             {
                 return NotFound(new { Message = $"Game with ID {id} not found." });
             }
-            return game;
+
+            var gameDtos = _mapper.Map<GameDto>(game);
+            gameDtos.StartDate = game.Time;
+
+            return Ok(gameDtos);
         }
 
         // PUT: api/Games/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutGame(int id, Game game)
+        public async Task<IActionResult> PutGame(int id, GameUpdateDto gameUpdateDto)
         {
-            if (id != game.Id)
+            if (id != gameUpdateDto.Id)
             {
                 return BadRequest();
             }
@@ -76,9 +88,11 @@ namespace Tournament.Api.Controllers
             try
             {
                 //await _context.SaveChangesAsync();//Old version
-                existingGame.Title = game.Title;
-                existingGame.Time = game.Time;
-                existingGame.TournamentDetailsId = game.TournamentDetailsId;
+                existingGame.Title = gameUpdateDto.Title;
+                existingGame.Time = gameUpdateDto.StartDate;
+                existingGame.TournamentDetailsId = gameUpdateDto.TournamentDetailsId;
+
+                _mapper.Map(gameUpdateDto, existingGame);
 
                 uow.GameRepository.Update(existingGame);
                 await uow.CompleteAsync();
@@ -101,11 +115,18 @@ namespace Tournament.Api.Controllers
         // POST: api/Games
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Game>> PostGame(Game game)
+        public async Task<ActionResult<Game>> PostGame(GameCreateDto gameCreateDto)
         {
             //_context.Games.Add(game);
             //await _context.SaveChangesAsync(); //Old verison
+            //Mapping DTO
+            if (gameCreateDto == null)
+            {
+                return BadRequest(new { Message = "Invalid tournament data." });
+            }
 
+            var game = _mapper.Map<Game>(gameCreateDto);
+            
             uow.GameRepository.Add(game);
             await uow.CompleteAsync();
 

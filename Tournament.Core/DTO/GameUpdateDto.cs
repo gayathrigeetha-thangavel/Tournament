@@ -6,10 +6,12 @@ using System.Threading.Tasks;
 
 namespace Tournament.Core.DTO
 {
-    public class GameDto
+    public class GameUpdateDto
     {
+        public int Id { get; set; }
         public string Title { get; set; }
         public DateTime StartDate { get; set; }
-        public int TournamentDetailsId {  get; set; }
+
+        public int TournamentDetailsId { get; set; }
     }
 }
