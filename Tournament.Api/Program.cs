@@ -30,6 +30,9 @@ public class Program
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
 
+        //Auto mapper
+        builder.Services.AddAutoMapper(typeof(TournamentMappings));
+
         //Unit of work call added to the service
         builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
