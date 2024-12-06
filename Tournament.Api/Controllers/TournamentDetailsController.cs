@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -11,6 +12,7 @@ using NuGet.Protocol.Core.Types;
 using Tournament.Core.Entites;
 using Tournament.Core.Repositories;
 using Tournament.Data.Data;
+using Tournament.Core.DTO;
 
 namespace Tournament.Api.Controllers
 {
@@ -22,30 +24,36 @@ namespace Tournament.Api.Controllers
 
         private readonly IUnitOfWork uow;
 
-        public TournamentDetailsController(TournamentApiContext context, IUnitOfWork unitOfWork)
+        private readonly IMapper _mapper;
+
+        public TournamentDetailsController(TournamentApiContext context, IUnitOfWork unitOfWork, IMapper mapper)
         {
             _context = context;
             uow = unitOfWork;
+            _mapper = mapper;
         }
 
         // GET: api/TournamentDetails
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TournamentDetails>>> GetTournamentDetails()
+        public async Task<ActionResult<IEnumerable<TournamentDto>>> GetTournamentDetails()
         {
             // var tournaments = await _context.TournamentDetails.ToListAsync();// direct action
 
-            var tournments = await uow.TournamentRepository.GetAllAsync();
+            var tournaments = await uow.TournamentRepository.GetAllAsync();
 
-            if (tournments == null)
+            if (tournaments == null)
             {
                 return NotFound(new { Message = $"Tournament not found." });
             }
-            return Ok(tournments);
+
+            var tournamentDtos = _mapper.Map<IEnumerable<TournamentDto>>(tournaments);
+
+            return Ok(tournamentDtos);
         }
 
         // GET: api/TournamentDetails/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<TournamentDetails>> GetTournamentDetails(int id)
+        public async Task<ActionResult<TournamentDto>> GetTournamentDetails(int id)
         {
             var tournamentDetails = await uow.TournamentRepository.GetAsync(id);
 
@@ -53,16 +61,17 @@ namespace Tournament.Api.Controllers
             {
                 return NotFound(new { Message = $"Tournament with ID {id} not found." });
             }
+            var tournamentDtos = _mapper.Map<TournamentDto>(tournamentDetails);
 
-            return tournamentDetails;
+            return Ok(tournamentDtos);
         }
 
         // PUT: api/TournamentDetails/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutTournamentDetails(int id, TournamentDetails tournamentDetails)
+        public async Task<IActionResult> PutTournamentDetails(int id, TournamentUpdateDto tournamentUpdateDto)
         {
-            if (id != tournamentDetails.Id)
+            if (id != tournamentUpdateDto.Id)
             {
                 return BadRequest(new { Message = "ID mismatch." });
             }
@@ -79,8 +88,10 @@ namespace Tournament.Api.Controllers
             {
                 //await _context.SaveChangesAsync(); // direct action
                 
-                existingTournament.Title = tournamentDetails.Title;
-                existingTournament.StartDate = tournamentDetails.StartDate;
+                existingTournament.Title = tournamentUpdateDto.Title;
+                existingTournament.StartDate = tournamentUpdateDto.StartDate;
+
+                 _mapper.Map(tournamentUpdateDto, existingTournament);
 
                 uow.TournamentRepository.Update(existingTournament);
                 await uow.CompleteAsync();
@@ -103,10 +114,18 @@ namespace Tournament.Api.Controllers
         // POST: api/TournamentDetails
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<TournamentDetails>> PostTournamentDetails(TournamentDetails tournamentDetails)
+        public async Task<ActionResult<TournamentDetails>> PostTournamentDetails(TournamentCreateDto tournamentCreateDto)
         {
             //_context.TournamentDetails.Add(tournamentDetails); //direct action
             //await _context.SaveChangesAsync();
+
+            //Mapping DTO
+            if (tournamentCreateDto == null)
+            {
+                return BadRequest(new { Message = "Invalid tournament data." });
+            }
+
+            var tournamentDetails = _mapper.Map<TournamentDetails>(tournamentCreateDto);
 
             uow.TournamentRepository.Add(tournamentDetails);
             await uow.CompleteAsync();
