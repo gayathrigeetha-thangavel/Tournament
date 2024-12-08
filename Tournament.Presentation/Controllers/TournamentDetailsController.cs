@@ -14,7 +14,7 @@ using Tournament.Core.Repositories;
 using Tournament.Data.Data;
 using Tournament.Core.DTO;
 
-namespace Tournament.Api.Controllers
+namespace Tournament.Presentation.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -87,11 +87,11 @@ namespace Tournament.Api.Controllers
             try
             {
                 //await _context.SaveChangesAsync(); // direct action
-                
+
                 existingTournament.Title = tournamentUpdateDto.Title;
                 existingTournament.StartDate = tournamentUpdateDto.StartDate;
 
-                 _mapper.Map(tournamentUpdateDto, existingTournament);
+                _mapper.Map(tournamentUpdateDto, existingTournament);
 
                 uow.TournamentRepository.Update(existingTournament);
                 await uow.CompleteAsync();
@@ -159,7 +159,7 @@ namespace Tournament.Api.Controllers
             //return _context.TournamentDetails.Any(e => e.Id == id);
 
             return uow.TournamentRepository.AnyAsync(id);
-            
+
         }
 
     }

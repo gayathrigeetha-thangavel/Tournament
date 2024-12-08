@@ -11,7 +11,7 @@ using Tournament.Core.Entites;
 using Tournament.Core.Repositories;
 using Tournament.Data.Data;
 
-namespace Tournament.Api.Controllers
+namespace Tournament.Presentation.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -45,7 +45,7 @@ namespace Tournament.Api.Controllers
 
             var gameDtos = _mapper.Map<IEnumerable<GameDto>>(games);
 
-            return Ok(gameDtos); 
+            return Ok(gameDtos);
         }
 
         // GET: api/Games/5
@@ -126,7 +126,7 @@ namespace Tournament.Api.Controllers
             }
 
             var game = _mapper.Map<Game>(gameCreateDto);
-            
+
             uow.GameRepository.Add(game);
             await uow.CompleteAsync();
 

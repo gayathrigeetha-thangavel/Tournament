@@ -1,6 +1,6 @@
 ﻿using Tournament.Core.Entites;
 
-namespace Tournament.Api.Repositories
+namespace Tournament.Core.Repositories
 {
     public interface ITournamentRepository
     {
