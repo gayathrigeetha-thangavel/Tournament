@@ -7,9 +7,9 @@ using Tournament.Core.DTO;
 
 namespace Service.Contracts
 {
-    public interface ITournamentService
+    public interface ITournamentService 
     {
-        Task<IEnumerable<TournamentDto>> GetTournamentAsync();
-        Task<TournamentDto> GetCompanyAsync(int id);
+        Task<IEnumerable<TournamentDto>> GetTournamentsAsync();
+        Task<TournamentDto> GetTournamentAsyncByID(int id);
     }
 }

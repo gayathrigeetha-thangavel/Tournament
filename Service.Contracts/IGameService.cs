@@ -9,7 +9,7 @@ namespace Service.Contracts
 {
     public interface IGameService
     {
-        Task<IEnumerable<GameDto>> GetCompaniesAsync();
-        Task<GameDto> GetCompanyAsync(int id);
+        Task<IEnumerable<GameDto>> GetGamesAsync();
+        Task<GameDto> GetGameAsyncByID(int id);
     }
 }

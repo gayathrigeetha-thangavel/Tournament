@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Tournament.Core.Entites;
-using Tournament.Core.Repositories;
+using Tournament.Core.IRepositories;
 using Tournament.Data.Data;
 
 namespace Tournament.Data.Repositories

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Tournament.Core.Repositories
+namespace Tournament.Core.IRepositories
 {
     public interface IUnitOfWork
     {

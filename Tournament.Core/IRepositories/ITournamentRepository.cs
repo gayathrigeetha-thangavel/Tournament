@@ -1,6 +1,6 @@
 ﻿using Tournament.Core.Entites;
 
-namespace Tournament.Core.Repositories
+namespace Tournament.Core.IRepositories
 {
     public interface ITournamentRepository
     {
@@ -11,5 +11,6 @@ namespace Tournament.Core.Repositories
         public void Add(TournamentDetails tournament);
         public void Update(TournamentDetails tournament);
         public void Remove(TournamentDetails tournament);
+
     }
 }

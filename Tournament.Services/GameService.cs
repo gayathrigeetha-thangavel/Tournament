@@ -1,23 +1,45 @@
-﻿using Service.Contracts;
+﻿using AutoMapper;
+using Service.Contracts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Tournament.Core.DTO;
+using Tournament.Core.Exceptions;
+using Tournament.Core.IRepositories;
+
 
 namespace Tournament.Services
 {
     public class GameService : IGameService
     {
-        public Task<IEnumerable<GameDto>> GetCompaniesAsync()
+
+        private readonly IUnitOfWork uow;
+
+        private readonly IMapper _mapper;
+
+        public GameService(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            throw new NotImplementedException();
+            uow = unitOfWork;
+            _mapper = mapper;
+        }
+        public async Task<IEnumerable<GameDto>> GetGamesAsync()
+        {
+            var games = await uow.GameRepository.GetAllAsync();
+            return _mapper.Map<IEnumerable<GameDto>>(games);
         }
 
-        public Task<GameDto> GetCompanyAsync(int id)
+        public async Task<GameDto> GetGameAsyncByID(int id)
         {
-            throw new NotImplementedException();
+            var gameDetails = await uow.GameRepository.GetAsync(id);
+
+            if (gameDetails == null)
+            {
+                throw new GameNotFoundException(id);
+            }
+
+            return _mapper.Map<GameDto>(gameDetails);
         }
     }
 }

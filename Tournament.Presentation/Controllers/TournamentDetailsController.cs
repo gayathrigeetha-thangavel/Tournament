@@ -1,18 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Threading.Tasks;
-using AutoMapper;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using NuGet.Protocol.Core.Types;
 using Tournament.Core.Entites;
-using Tournament.Core.Repositories;
 using Tournament.Data.Data;
 using Tournament.Core.DTO;
+using Service.Contracts;
+using Tournament.Core.IRepositories;
+
 
 namespace Tournament.Presentation.Controllers
 {
@@ -26,12 +20,16 @@ namespace Tournament.Presentation.Controllers
 
         private readonly IMapper _mapper;
 
-        public TournamentDetailsController(TournamentApiContext context, IUnitOfWork unitOfWork, IMapper mapper)
+        private readonly IServiceManager serviceManager;
+
+        
+
+        /***public TournamentDetailsController(TournamentApiContext context, IUnitOfWork unitOfWork, IMapper mapper)
         {
             _context = context;
             uow = unitOfWork;
             _mapper = mapper;
-        }
+        } **/
 
         // GET: api/TournamentDetails
         [HttpGet]
@@ -39,14 +37,19 @@ namespace Tournament.Presentation.Controllers
         {
             // var tournaments = await _context.TournamentDetails.ToListAsync();// direct action
 
-            var tournaments = await uow.TournamentRepository.GetAllAsync();
+            /**var tournaments = await uow.TournamentRepository.GetAllAsync();
 
             if (tournaments == null)
             {
                 return NotFound(new { Message = $"Tournament not found." });
-            }
+            }**/
 
-            var tournamentDtos = _mapper.Map<IEnumerable<TournamentDto>>(tournaments);
+            var tournamentDtos = await serviceManager.TournamentService.GetTournamentsAsync();
+
+            if (tournamentDtos == null)
+            {
+                return NotFound(new { Message = $"Tournament not found." });
+            }
 
             return Ok(tournamentDtos);
         }
@@ -55,17 +58,21 @@ namespace Tournament.Presentation.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<TournamentDto>> GetTournamentDetails(int id)
         {
-            var tournamentDetails = await uow.TournamentRepository.GetAsync(id);
+            /*var tournamentDetails = await uow.TournamentRepository.GetAsync(id);
 
             if (tournamentDetails == null)
             {
                 return NotFound(new { Message = $"Tournament with ID {id} not found." });
             }
-            var tournamentDtos = _mapper.Map<TournamentDto>(tournamentDetails);
+            var tournamentDtos = _mapper.Map<TournamentDto>(tournamentDetails); */
 
-            return Ok(tournamentDtos);
+            return Ok(await serviceManager.TournamentService.GetTournamentAsyncByID(id));
+
+            
+
+            
         }
-
+        /**
         // PUT: api/TournamentDetails/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
@@ -160,7 +167,7 @@ namespace Tournament.Presentation.Controllers
 
             return uow.TournamentRepository.AnyAsync(id);
 
-        }
+        }**/
 
     }
 

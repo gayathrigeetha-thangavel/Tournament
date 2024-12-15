@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Tournament.Core.Repositories;
+using Tournament.Core.IRepositories;
 
 namespace Tournament.Services
 {
@@ -14,9 +14,7 @@ namespace Tournament.Services
         private readonly Lazy<ITournamentService> tournamentService;
         private readonly Lazy<IGameService> gameService;
 
-        public ITournamentRepository TournamentService => throw new NotImplementedException();
-
-        public IGameRepository GameService => throw new NotImplementedException();
+        
 
         public ServiceManager(Lazy<ITournamentService> tournamentService, Lazy<IGameService> gameService)
         {
@@ -24,5 +22,9 @@ namespace Tournament.Services
             this.gameService = gameService;
         
         }
+
+        public ITournamentService TournamentService => tournamentService.Value;
+
+        public IGameService GameService => gameService.Value;
     }
 }

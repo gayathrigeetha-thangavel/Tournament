@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
-using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Service.Contracts;
 using Tournament.Core.DTO;
 using Tournament.Core.Entites;
-using Tournament.Core.Repositories;
+using Tournament.Core.IRepositories;
 using Tournament.Data.Data;
 
 namespace Tournament.Presentation.Controllers
@@ -23,11 +19,18 @@ namespace Tournament.Presentation.Controllers
 
         private readonly IMapper _mapper;
 
-        public GamesController(TournamentApiContext context, IUnitOfWork unitOfWork, IMapper mapper)
+        private readonly IServiceManager serviceManager;
+
+        /*public GamesController(TournamentApiContext context, IUnitOfWork unitOfWork, IMapper mapper)
+         {
+             _context = context;
+             uow = unitOfWork;
+             _mapper = mapper;
+         }*/
+
+        public GamesController(IServiceManager serviceManager)
         {
-            _context = context;
-            uow = unitOfWork;
-            _mapper = mapper;
+            this.serviceManager = serviceManager;
         }
 
         // GET: api/Games
@@ -36,17 +39,25 @@ namespace Tournament.Presentation.Controllers
         {
             //var games = await _context.Games.ToListAsync(); //Old version
 
-            var games = await uow.GameRepository.GetAllAsync();
+            /* var games = await uow.GameRepository.GetAllAsync();
 
             if (games == null)
             {
                 return NotFound(new { Message = $"Games not found." });
-            }
+            } */
 
-            var gameDtos = _mapper.Map<IEnumerable<GameDto>>(games);
+            var gameDtos = await serviceManager.GameService.GetGamesAsync();
+
+            if (gameDtos == null)
+            {
+                return NotFound(new { Message = $"Tournament not found." });
+            }
+            
 
             return Ok(gameDtos);
         }
+
+        
 
         // GET: api/Games/5
         [HttpGet("{id}")]
@@ -54,7 +65,7 @@ namespace Tournament.Presentation.Controllers
         {
             // var game = await _context.Games.FindAsync(id);//Old version
 
-            var game = await uow.GameRepository.GetAsync(id);
+            /*var game = await uow.GameRepository.GetAsync(id);
 
             if (game == null)
             {
@@ -64,9 +75,13 @@ namespace Tournament.Presentation.Controllers
             var gameDtos = _mapper.Map<GameDto>(game);
             gameDtos.StartDate = game.Time;
 
-            return Ok(gameDtos);
+            return Ok(gameDtos);*/
+
+            return Ok(await serviceManager.GameService.GetGameAsyncByID(id));
         }
 
+
+        /* before restructuring codes
         // PUT: api/Games/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
@@ -160,5 +175,6 @@ namespace Tournament.Presentation.Controllers
 
             return uow.GameRepository.AnyAsync(id);
         }
+        */
     }
 }

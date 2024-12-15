@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Tournament.Core.Repositories;
+﻿using Tournament.Core.IRepositories;
 
 namespace Service.Contracts
 {
     public interface IServiceManager
     {
-        ITournamentRepository TournamentService { get; }
-        IGameRepository GameService { get; }
+        ITournamentService TournamentService { get; }
+        IGameService GameService { get; }
     }
 }
