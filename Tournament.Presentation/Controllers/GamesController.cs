@@ -9,8 +9,9 @@ using Tournament.Data.Data;
 
 namespace Tournament.Presentation.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
+    
     public class GamesController : ControllerBase
     {
         private readonly TournamentApiContext _context;
@@ -31,6 +32,12 @@ namespace Tournament.Presentation.Controllers
         public GamesController(IServiceManager serviceManager)
         {
             this.serviceManager = serviceManager;
+        }
+
+        [HttpGet("test")]
+        public IActionResult GetTest()
+        {
+            return Ok("Swagger Works!");
         }
 
         // GET: api/Games

@@ -1,6 +1,10 @@
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Metadata;
 using Tournament.Api.Extensions;
 using Tournament.Data.Data;
+using AutoMapper;
+
+
 
 public class Program
 {
@@ -14,7 +18,8 @@ public class Program
 
         builder.Services.AddControllers(opt => opt.ReturnHttpNotAcceptable = true)
             .AddNewtonsoftJson()
-            .AddXmlDataContractSerializerFormatters();
+            //.AddXmlDataContractSerializerFormatters()
+            .AddApplicationPart(typeof(AssemblyReference).Assembly);
 
         // DB connection establishment
         var connectionString = builder.Configuration.GetConnectionString("TournamentApiContext") 

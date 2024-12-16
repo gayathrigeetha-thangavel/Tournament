@@ -10,8 +10,9 @@ using Tournament.Core.IRepositories;
 
 namespace Tournament.Presentation.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
+    //[ApiController]
     public class TournamentDetailsController : ControllerBase
     {
         private readonly TournamentApiContext _context;
@@ -22,7 +23,7 @@ namespace Tournament.Presentation.Controllers
 
         private readonly IServiceManager serviceManager;
 
-        
+
 
         /***public TournamentDetailsController(TournamentApiContext context, IUnitOfWork unitOfWork, IMapper mapper)
         {
@@ -30,6 +31,11 @@ namespace Tournament.Presentation.Controllers
             uow = unitOfWork;
             _mapper = mapper;
         } **/
+
+        public TournamentDetailsController(IServiceManager serviceManager)
+        {
+            this.serviceManager = serviceManager;
+        }
 
         // GET: api/TournamentDetails
         [HttpGet]
