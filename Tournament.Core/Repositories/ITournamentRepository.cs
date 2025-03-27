@@ -8,6 +8,7 @@ namespace Tournament.Api.Repositories
         public Task<TournamentDetails> GetAsync(int id);
         public Task<bool> AnyAsync(int id);
 
+        
         public void Add(TournamentDetails tournament);
         public void Update(TournamentDetails tournament);
         public void Remove(TournamentDetails tournament);
